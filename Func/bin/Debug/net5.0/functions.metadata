@@ -1,0 +1,21 @@
+[
+  {
+    "name": "HandleAmbrosia",
+    "scriptFile": "Function.dll",
+    "entryPoint": "Company.Function.HandleAmbrosia.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "myQueueItem",
+        "type": "queueTrigger",
+        "direction": "In",
+        "dataType": "String",
+        "queueName": "ambrosia-add-queue",
+        "connection": "datcbuoys_STORAGE"
+      }
+    ]
+  }
+]
