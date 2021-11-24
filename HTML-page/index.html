@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title> DATC</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.js"></script>
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+
+  <style>
+    html{
+    width: 100%;
+    height: 100%;
+    }
+    body{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow-y: hidden;
+    }
+    #map{
+    width: 100%;
+    height: 100%;
+    }
+  </style>
+
+  <body>
+    <div id="map"></div>
+    <div class="navbar" style="width: 100%; height: 15%; background-color:rgba(0,0,0, 0.5); position:absolute; top: 0; left: 0;">
+    <button style=" margin-left: 3%;border-radius: 12px; background-color:#008CBA;">Administrator</button>
+    <button style="margin-left: 8%; border-radius: 12px; background-color:#008CBA;">Deconectare</button>
+    </div>
+  </body>
+
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoiYWthc2t5IiwiYSI6ImNrd2R4aG50bDFoN3UydXFsMzAyZTczdnoifQ.vk6IF35BtkXOJl2mQMf_Tg';
+        const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+        center: [ 25.0094303,45.9442858], // starting position [lng, lat]
+        zoom: 6 // starting zoom
+      });
+   </script>
+</html>
