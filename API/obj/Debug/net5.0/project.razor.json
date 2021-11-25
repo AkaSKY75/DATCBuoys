@@ -1,5 +1,5 @@
 {
-  "FilePath": "c:\\Users\\hamat\\OneDrive\\Documente\\Facultate\\Anul 4\\sem1\\DAC\\Laborator\\Proiect\\API\\L04.csproj",
+  "FilePath": "e:\\Faculta\\DATC\\DATCBuoys\\API\\API.csproj",
   "Configuration": {
     "ConfigurationName": "MVC-3.0",
     "LanguageVersion": "5.0",
@@ -15616,7 +15616,7 @@
     ],
     "CSharpLanguageVersion": 900
   },
-  "RootNamespace": "L04",
+  "RootNamespace": "API",
   "Documents": [],
   "SerializationFormat": "0.2"
 }

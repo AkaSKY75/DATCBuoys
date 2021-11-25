@@ -23,12 +23,7 @@ namespace Ambrosia.Controllers
             _ambrosiasRepository = ambrosiasRepository;
         }
 
-        [HttpGet]
-        public async Task<String> Get()
-        {
-            
-            return "asd";
-        }
+
         [HttpPost]
         public async Task Post([FromBody] AmbrosiaEntity ambrosia)
         {

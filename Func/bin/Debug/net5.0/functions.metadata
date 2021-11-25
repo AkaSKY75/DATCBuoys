@@ -14,7 +14,7 @@
         "direction": "In",
         "dataType": "String",
         "queueName": "ambrosia-add-queue",
-        "connection": "datcbuoys_STORAGE"
+        "connection": "laborator4danmircea_STORAGE"
       }
     ]
   }

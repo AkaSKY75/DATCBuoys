@@ -44,5 +44,26 @@
         center: [ 25.0094303,45.9442858], // starting position [lng, lat]
         zoom: 6 // starting zoom
       });
+	map.on('load', () => {
+
+      var el = document.createElement('div');
+      el.className = 'marker';
+      el.style.borderRadius = "50%";
+      el.style.width = "25px";
+      el.style.height = "25px";
+      el.style.backgroundColor = "rgba(0,0,0,0.5)";
+
+      // make a marker for each feature and add it to the map
+      var marker = new mapboxgl.Marker(el)
+        .setLngLat([25.0094303,45.9442858])
+        /*.setPopup(
+          new mapboxgl.Popup({
+            offset: 25
+          }) // add popups
+          .setHTML()
+        )*/
+        .addTo(map);
+	console.log(marker);
+	});
    </script>
 </html>

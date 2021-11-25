@@ -15,8 +15,8 @@ namespace Company.Function
             this.RowKey = IMEI;
         }
         public AmbrosiaEntity() { }
-        public float XCoord { get; set; }
-        public float YCoord { get; set; }
+        public double XCoord { get; set; }
+        public double YCoord { get; set; }
         
 
     }

@@ -12,21 +12,21 @@ namespace Company.Function
         private static CloudTable _ambrosiaTable;
         private static string _connectionString;
         [Function("HandleAmbrosia")]
-        public static void Run([QueueTrigger("ambrosia-add-queue", Connection = "datcbuoys_STORAGE")] string myQueueItem,
+        public static void Run([QueueTrigger("ambrosia-add-queue", Connection = "laborator4danmircea_STORAGE")] string myQueueItem,
             FunctionContext context)
         {
-             _connectionString = "DefaultEndpointsProtocol=https;AccountName=datcbuoys;AccountKey=42sbB51rcIja1ogyqKlT5Yw8d0uWsZH7W5/Vo8niUm83zYg1/J0Ggf64GfPs02BDInyBI845RWZwohYEIZwiLQ==;EndpointSuffix=core.windows.net";
+             _connectionString = "DefaultEndpointsProtocol=https;AccountName=laborator4danmircea;AccountKey=cW8vQ+vW9S3iELU5W8zFzJgLHXUh0Y7HvMWxGYQcTr1sPVKl7pBB9/88QZbqcnzsvOpE8RxBbh9abO8yK5KLDg==;EndpointSuffix=core.windows.net";
             Task.Run(async () =>{ await InitializeTable();}).GetAwaiter().GetResult();
             var logger = context.GetLogger("HandleAmbrosia");
             logger.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
             var command = JsonConvert.DeserializeObject<AmbrosiaEntity>(myQueueItem);
-            logger.LogInformation($"C# Deserialized obj : {command.XCoord}");
+            logger.LogInformation($"C# XCoord : {command.XCoord}\n YCoord: {command.YCoord}");
             TableQuery<AmbrosiaEntity> query = new TableQuery<AmbrosiaEntity>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, command.RowKey));
             TableContinuationToken token = null;
             TableQuerySegment<AmbrosiaEntity> resultSegment = Task.Run(async () =>{ return await _ambrosiaTable.ExecuteQuerySegmentedAsync(query, token);}).GetAwaiter().GetResult();
             token = resultSegment.ContinuationToken;
         
-            command.PartitionKey=resultSegment.Results.Count.ToString();
+            command.PartitionKey = resultSegment.Results.Count.ToString();
             var insertOperation = TableOperation.Insert(command);
             Task.Run(async () =>{  await _ambrosiaTable.ExecuteAsync(insertOperation);}).GetAwaiter().GetResult();
             

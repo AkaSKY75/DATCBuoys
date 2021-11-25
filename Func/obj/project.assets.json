@@ -7760,26 +7760,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\hamat\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "C:\\Users\\user\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\hamat\\OneDrive\\Documente\\Facultate\\Anul 4\\sem1\\DAC\\Laborator\\Proiect\\Function\\Function.csproj",
+      "projectUniqueName": "E:\\Faculta\\DATC\\DATCBuoys\\Func\\Function.csproj",
       "projectName": "Function",
-      "projectPath": "C:\\Users\\hamat\\OneDrive\\Documente\\Facultate\\Anul 4\\sem1\\DAC\\Laborator\\Proiect\\Function\\Function.csproj",
-      "packagesPath": "C:\\Users\\hamat\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\hamat\\OneDrive\\Documente\\Facultate\\Anul 4\\sem1\\DAC\\Laborator\\Proiect\\Function\\obj\\",
+      "projectPath": "E:\\Faculta\\DATC\\DATCBuoys\\Func\\Function.csproj",
+      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+      "outputPath": "E:\\Faculta\\DATC\\DATCBuoys\\Func\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
         "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\hamat\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
