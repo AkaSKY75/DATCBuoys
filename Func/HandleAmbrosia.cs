@@ -4,6 +4,9 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+
+
 namespace Company.Function
 {
     public static class HandleAmbrosia
@@ -29,7 +32,6 @@ namespace Company.Function
             command.PartitionKey = resultSegment.Results.Count.ToString();
             var insertOperation = TableOperation.Insert(command);
             Task.Run(async () =>{  await _ambrosiaTable.ExecuteAsync(insertOperation);}).GetAwaiter().GetResult();
-            
         }
         private static async Task InitializeTable()
         {

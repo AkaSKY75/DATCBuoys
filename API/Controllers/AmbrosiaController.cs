@@ -24,6 +24,12 @@ namespace Ambrosia.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<List<AmbrosiaEntity>> Get()
+        {
+            return await _ambrosiasRepository.GetAllAmbrosias();
+        }
+
         [HttpPost]
         public async Task Post([FromBody] AmbrosiaEntity ambrosia)
         {

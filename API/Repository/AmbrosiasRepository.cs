@@ -14,7 +14,9 @@ namespace Ambrosia.Repository
     public class AmbrosiasRepository:IAmbrosiasRepository
     {
         private string _connectionString;
-        
+        private static CloudTableClient _tableClient;
+        private static CloudTable _ambrosiaTable;
+
         public async Task CreateAmbrosia(AmbrosiaEntity ambrosia)
         {
             //var insertOperation = TableOperation.Insert(student);
@@ -33,23 +35,31 @@ namespace Ambrosia.Repository
         }
         public AmbrosiasRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetValue(typeof(string), "AzureStorageConnectionString").ToString();
+            Task.Run(async () => { await InitializeTable(configuration); }).GetAwaiter().GetResult();
+
         }
         
-        
+        public async Task InitializeTable(IConfiguration configuration)
+        {
+            _connectionString = configuration.GetValue(typeof(string), "AzureStorageConnectionString").ToString();
+            var account = CloudStorageAccount.Parse(_connectionString);
+            _tableClient = account.CreateCloudTableClient();
+            _ambrosiaTable = _tableClient.GetTableReference("Ambrosia");
+            await _ambrosiaTable.CreateIfNotExistsAsync();
+        }
 
-        /*public  async Task<List<AmbrosiaEntity>> GetAllAmbrosias()
+        public async Task<List<AmbrosiaEntity>> GetAllAmbrosias()
         {
             var ambrosias = new List<AmbrosiaEntity>();
             TableQuery<AmbrosiaEntity> query = new TableQuery<AmbrosiaEntity>();
             TableContinuationToken token = null;
             do
             {
-                TableQuerySegment<AmbrosiaEntity> resultSegment = await _ambrosiasTable.ExecuteQuerySegmentedAsync(query, token);
+                TableQuerySegment<AmbrosiaEntity> resultSegment = await _ambrosiaTable.ExecuteQuerySegmentedAsync(query, token);
                 token = resultSegment.ContinuationToken;
                 ambrosias.AddRange(resultSegment);
             } while (token != null);
             return ambrosias;
-        }*/
+        }
     }
 }

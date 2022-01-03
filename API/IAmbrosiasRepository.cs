@@ -10,7 +10,7 @@ namespace Ambrosia
 {
     public interface IAmbrosiasRepository
     {
-        //Task<List<AmbrosiaEntity>> GetAllAmbrosias();
+        Task<List<AmbrosiaEntity>> GetAllAmbrosias();
         Task CreateAmbrosia(AmbrosiaEntity ambrosia);
        
         

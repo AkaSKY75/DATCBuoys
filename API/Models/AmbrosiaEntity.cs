@@ -16,7 +16,6 @@ namespace Ambrosia.Models
         public AmbrosiaEntity() { }
         public double XCoord { get; set; }
         public double YCoord { get; set; }
-        
-
+        public int status { get; set; }
     }
 }
