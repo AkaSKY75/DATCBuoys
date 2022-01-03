@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Company.Function
 {
-    public class AmbrosiaEntity: TableEntity
+    public class AmbrosiaEntity: Command
     {
         public AmbrosiaEntity(string IMEI)
         {

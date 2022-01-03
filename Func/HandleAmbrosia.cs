@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
+using Company.Command;
 
 namespace Company.Function
 {
@@ -22,23 +22,32 @@ namespace Company.Function
             Task.Run(async () =>{ await InitializeTable();}).GetAwaiter().GetResult();
             var logger = context.GetLogger("HandleAmbrosia");
             logger.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
-            var command = JsonConvert.DeserializeObject<AmbrosiaEntity>(myQueueItem);
-            logger.LogInformation($"C# XCoord : {command.XCoord}\n YCoord: {command.YCoord}");
-            TableQuery<AmbrosiaEntity> query = new TableQuery<AmbrosiaEntity>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, command.RowKey));
-            TableContinuationToken token = null;
-            TableQuerySegment<AmbrosiaEntity> resultSegment = Task.Run(async () =>{ return await _ambrosiaTable.ExecuteQuerySegmentedAsync(query, token);}).GetAwaiter().GetResult();
-            token = resultSegment.ContinuationToken;
+            var command = JsonConvert.DeserializeObject<Command>(myQueueItem);
+            if( command.type == 0 )
+            {
+                command = (AmbrosiaEntity)command;
+                logger.LogInformation($"C# XCoord : {command.XCoord}\n YCoord: {command.YCoord}");
+                TableQuery<AmbrosiaEntity> query = new TableQuery<AmbrosiaEntity>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, command.RowKey));
+                TableContinuationToken token = null;
+                TableQuerySegment<AmbrosiaEntity> resultSegment = Task.Run(async () =>{ return await _ambrosiaTable.ExecuteQuerySegmentedAsync(query, token);}).GetAwaiter().GetResult();
+                token = resultSegment.ContinuationToken;
         
-            command.PartitionKey = resultSegment.Results.Count.ToString();
-            var insertOperation = TableOperation.Insert(command);
-            Task.Run(async () =>{  await _ambrosiaTable.ExecuteAsync(insertOperation);}).GetAwaiter().GetResult();
+                command.PartitionKey = resultSegment.Results.Count.ToString();
+                var insertOperation = TableOperation.Insert(command);
+                Task.Run(async () =>{  await _ambrosiaTable.ExecuteAsync(insertOperation);}).GetAwaiter().GetResult();
+            }
+            
         }
         private static async Task InitializeTable()
         {
             var account = CloudStorageAccount.Parse(_connectionString);
             _tableClient = account.CreateCloudTableClient();
             _ambrosiaTable = _tableClient.GetTableReference("Ambrosia");
+            _logTable = _tableClient.GetTableReference("Logs");
+            _administratorTable = _tableClient.GetTableReference("Administrators");
             await _ambrosiaTable.CreateIfNotExistsAsync();
+            await _logTable.CreateIfNotExistsAsync();
+            await _administratorTable.CreateIfNotExistsAsync();
         }
     }
     
