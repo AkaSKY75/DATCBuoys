@@ -12,7 +12,8 @@ namespace Ambrosia
     {
         Task<List<AmbrosiaEntity>> GetAllAmbrosias();
         Task CreateAmbrosia(AmbrosiaEntity ambrosia);
-       
+        Task UpdateAmbrosia(JObject ambrosia);
+        Task DeleteAmbrosia(JObject ambrosia);
         
     }
 }

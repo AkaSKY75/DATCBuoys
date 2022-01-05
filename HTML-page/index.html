@@ -7,6 +7,11 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.0/mapbox-gl.js"></script>
+    <script
+			  src="https://code.jquery.com/jquery-3.6.0.min.js"
+			  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+			  crossorigin="anonymous"></script>
+
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   </head>
@@ -28,7 +33,7 @@
     }
   </style>
 
-  <body>
+  <body onload="Initialize()">
     <div id="map"></div>
     <div class="navbar" style="width: 100%; height: 15%; background-color:rgba(0,0,0, 0.5); position:absolute; top: 0; left: 0;">
     <button style=" margin-left: 3%;border-radius: 12px; background-color:#008CBA;">Administrator</button>
@@ -37,33 +42,120 @@
   </body>
 
     <script>
-      mapboxgl.accessToken = 'pk.eyJ1IjoiYWthc2t5IiwiYSI6ImNrd2R4aG50bDFoN3UydXFsMzAyZTczdnoifQ.vk6IF35BtkXOJl2mQMf_Tg';
-        const map = new mapboxgl.Map({
-        container: 'map', // container ID
-        style: 'mapbox://styles/mapbox/streets-v11', // style URL
-        center: [ 25.0094303,45.9442858], // starting position [lng, lat]
-        zoom: 6 // starting zoom
-      });
-	map.on('load', () => {
 
-      var el = document.createElement('div');
-      el.className = 'marker';
-      el.style.borderRadius = "50%";
-      el.style.width = "25px";
-      el.style.height = "25px";
-      el.style.backgroundColor = "rgba(0,0,0,0.5)";
+      var markers = []
 
-      // make a marker for each feature and add it to the map
-      var marker = new mapboxgl.Marker(el)
-        .setLngLat([25.0094303,45.9442858])
-        /*.setPopup(
-          new mapboxgl.Popup({
-            offset: 25
-          }) // add popups
-          .setHTML()
-        )*/
-        .addTo(map);
-	console.log(marker);
-	});
-   </script>
+      function Initialize()
+      {
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYWthc2t5IiwiYSI6ImNrd2R4aG50bDFoN3UydXFsMzAyZTczdnoifQ.vk6IF35BtkXOJl2mQMf_Tg';
+          const map = new mapboxgl.Map({
+          container: 'map', // container ID
+          style: 'mapbox://styles/mapbox/streets-v11', // style URL
+          center: [ 25.0094303,45.9442858], // starting position [lng, lat]
+          zoom: 6 // starting zoom
+        });
+      	map.on('load', () => {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position){
+              console.log(position.coords.latitude, position.coords.longitude)
+              map.flyTo({
+                center: [
+                  position.coords.longitude,
+                  position.coords.latitude
+                ],
+                zoom: 15,
+                essential: true // this animation is considered essential with respect to prefers-reduced-motion
+              });
+              var marker = new mapboxgl.Marker()
+                .setLngLat([position.coords.longitude,position.coords.latitude])
+                .setPopup(
+                  new mapboxgl.Popup({
+                    offset: 25
+                  }) // add popups
+                  .setHTML("<h4>Locatia dvs.</h4>")
+                )
+                .addTo(map);
+            });
+          } else {
+            alert("Geolocation is not supported by this browser.");
+          }
+
+      	});
+        map.on('zoom', () => {
+          console.log(map.getZoom());
+        });
+        Refresh(map);
+      }
+
+      function Refresh(map)
+      {
+        $.ajax({
+          url: "https://datcbuoys-webapi.azurewebsites.net/Ambrosia",
+          type: "GET",
+          success: function(result){
+            for(var marker of markers)
+              item.remove();
+            for(var zone of result)
+            {
+              var el = document.createElement('div');
+              el.className = 'marker';
+              el.style.borderRadius = "50%";
+              el.style.width = "25px";
+              el.style.height = "25px";
+              el.style.backgroundColor = "rgba(255,0,0,0.5)";
+
+
+              // make a marker for each feature and add it to the map
+              var marker = new mapboxgl.Marker(el)
+                .setLngLat([zone.yCoord, zone.xCoord])
+                /*.setPopup(
+                  new mapboxgl.Popup({
+                    offset: 25
+                  }) // add popups
+                  .setHTML("<div style=\"background-color: red; width: 100%; height: 100%;\"></div>")
+                )*/
+                .addTo(map);
+            }
+
+          },
+          error: function(error){
+            console.log(error);
+          }
+        });
+        setTimeout(function(){Refresh(map)}, 10000);
+      }
+
+  /*$.ajax({
+    url: "https://datcbuoys-webapi.azurewebsites.net/Ambrosia",
+    type: "GET",
+    success: function(result){
+      console.log(result)
+      for(var item of result)
+      {
+        var el = document.createElement('div');
+        el.className = 'marker';
+        el.style.borderRadius = "50%";
+        el.style.width = "25px";
+        el.style.height = "25px";
+        el.style.backgroundColor = "rgba(0,0,0,0.5)";
+
+        // make a marker for each feature and add it to the map
+        var marker = new mapboxgl.Marker(el)
+          .setLngLat([25.0094303,45.9442858])
+          .setPopup(
+            new mapboxgl.Popup({
+              offset: 25
+            }) // add popups
+            .setHTML("<div style=\"background-color: red; width: 100%; height: 100%;\"></div>")
+          )
+          .addTo(map);
+      }
+
+    },
+    error: function(error){
+      console.log(error);
+    }
+  });*/
+
+  </script>
 </html>

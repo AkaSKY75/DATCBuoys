@@ -14,8 +14,11 @@ namespace Ambrosia.Models
             this.RowKey = IMEI;
         }
         public AmbrosiaEntity() { }
+        public string name { get; set; }
         public double XCoord { get; set; }
         public double YCoord { get; set; }
         public int status { get; set; }
+        public double meters { get; set; }
+        public DateTime last_accessed { get; set; }
     }
 }

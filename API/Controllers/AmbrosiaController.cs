@@ -35,7 +35,16 @@ namespace Ambrosia.Controllers
         {
             await _ambrosiasRepository.CreateAmbrosia(ambrosia);
         }
-        
-        
+
+        [HttpPatch]
+        public async Task Patch([FromBody] Object ambrosia)
+        {
+            await _ambrosiasRepository.UpdateAmbrosia(JObject.Parse(ambrosia.ToString()));
+        }
+        [HttpDelete]
+        public async Task Delete([FromBody] Object ambrosia)
+        {
+            await _ambrosiasRepository.DeleteAmbrosia(JObject.Parse(ambrosia.ToString()));
+        }
     }
 }
