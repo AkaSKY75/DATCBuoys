@@ -34,16 +34,49 @@
   </style>
 
   <body onload="Initialize()">
+
     <div id="map"></div>
-    <div class="navbar" style="width: 100%; height: 15%; background-color:rgba(0,0,0, 0.5); position:absolute; top: 0; left: 0;">
-    <button style=" margin-left: 3%;border-radius: 12px; background-color:#008CBA;">Administrator</button>
-    <button style="margin-left: 8%; border-radius: 12px; background-color:#008CBA;">Deconectare</button>
+    <div id="logs" style="width: 0; height: 100%; position: absolute; left: 0; top: 0; overflow-y: auto;">
+
     </div>
+    <div id="navbar" class="navbar" style="width: 100%; height: 15%; background-color:rgba(0,0,0, 0.5); position:absolute; top: 0; left: 0;">
+      <button onclick="ToggleLogs()" style="margin-left: 3%;border-radius: 12px; background-color:#008CBA;">Loguri</button>
+      <button onclick="ToggleRefresh()" style="margin-left: 8%; border-radius: 12px; background-color:#008CBA;">Refresh</button>
+    </div>
+
   </body>
 
     <script>
 
-      var markers = []
+      var refresh = true;
+      var markers = [];
+      var zones = [];
+      var logs = [];
+      var meters_pixel = [
+                          [78271.484, 73551.136, 59959.436, 39135.742, 13591.701],
+                          [39135.742, 36775.568, 29979.718, 19567.871, 6795.850],
+                          [19567.871, 18387.784, 14989.859, 9783.936, 3397.925],
+                          [9783.936, 9193.892, 7494.929, 4891.968, 1698.963],
+                          [4891.968, 4596.946, 3747.465, 2445.984, 849.481],
+                          [2445.984, 2298.473, 1873.732, 1222.992, 424.741],
+                          [1222.992, 1149.237, 936.866, 611.496, 212.370],
+                          [611.496, 574.618, 468.433, 305.748, 106.185],
+                          [305.748, 287.309, 234.217, 152.874, 53.093],
+                          [152.874, 143.655, 117.108, 76.437, 26.546],
+                          [76.437, 71.827, 58.554, 38.218, 13.273],
+                          [38.218, 35.914, 29.277, 19.109, 6.637],
+                          [19.109, 17.957, 14.639, 9.555, 3.318],
+                          [9.555, 8.978, 7.319, 4.777, 1.659],
+                          [4.777, 4.489, 3.660, 2.389, 0.830],
+                          [2.389, 2.245, 1.830, 1.194, 0.415],
+                          [1.194, 1.122, 0.915, 0.597, 0.207],
+                          [0.597, 0.561, 0.457, 0.299, 0.104],
+                          [0.299, 0.281, 0.229, 0.149, 0.052],
+                          [0.149, 0.140, 0.114, 0.075, 0.026],
+                          [0.075, 0.070, 0.057, 0.037, 0.013],
+                          [0.037, 0.035, 0.029, 0.019, 0.006],
+                          [0.019, 0.018, 0.014, 0.009, 0.003]
+                        ]
 
       function Initialize()
       {
@@ -82,47 +115,177 @@
 
       	});
         map.on('zoom', () => {
-          console.log(map.getZoom());
+          ResetZones(map);
         });
         Refresh(map);
       }
 
+      function ToggleLogs()
+      {
+        if(!$('#logs').hasClass('shown'))
+        {
+          $( "#map" ).animate({
+              width: "75%",
+              left: "25%"
+          }, 400, function() {
+            // Animation complete.
+          });
+          $( "#navbar" ).animate({
+              width: "75%",
+              left: "25%"
+          }, 400, function() {
+            // Animation complete.
+          });
+          $( "#logs" ).animate({
+              width: "25%"
+          }, 400, function() {
+            // Animation complete.
+          });
+          $('#logs').addClass('shown');
+        }
+        else
+        {
+          $( "#map" ).animate({
+              width: "100%",
+              left: "0"
+          }, 400, function() {
+            // Animation complete.
+          });
+          $( "#navbar" ).animate({
+              width: "100%",
+              left: "0"
+          }, 400, function() {
+            // Animation complete.
+          });
+          $( "#logs" ).animate({
+              width: "0"
+          }, 400, function() {
+            // Animation complete.
+          });
+          $('#logs').removeClass('shown');
+        }
+      }
+
+      function ResetZones(map)
+      {
+        var zoom = map.getZoom();
+        for(var marker of markers)
+        {
+          marker.remove();
+        }
+        markers = []
+        for(var zone of zones)
+        {
+          if(zone.xCoord == 0)
+            radius = zone.meters/meters_pixel[Math.floor(zoom)][0];
+          else if(zone.xCoord >= -20 && zone.xCoord <= 20)
+            radius = zone.meters/meters_pixel[Math.floor(zoom)][1];
+          else if(zone.xCoord >= -40 && zone.xCoord <= 40)
+            radius = zone.meters/meters_pixel[Math.floor(zoom)][2];
+          else if(zone.xCoord >= -60 && zone.xCoord <= 60)
+            radius = zone.meters/meters_pixel[Math.floor(zoom)][3];
+          else if(zone.xCoord >= -80 && zone.xCoord <= 80)
+            radius = zone.meters/meters_pixel[Math.floor(zoom)][4];
+          var el = document.createElement('div');
+          el.className = 'marker';
+          el.style.borderRadius = "50%";
+          el.style.width = Math.floor(radius)*2 + "px";
+          el.style.height = Math.floor(radius)*2 + "px";
+          el.style.backgroundColor = "rgba(255,0,0,0.5)";
+
+
+          // make a marker for each feature and add it to the map
+          markers.push(new mapboxgl.Marker(el)
+            .setLngLat([zone.yCoord, zone.xCoord])
+            .setPopup(
+              new mapboxgl.Popup({
+                offset: 25
+              }) // add popups
+              .setHTML("<div data-name=\""+zone.name+"\" data-id=\""+zone.partitionKey+"\" data-rowkey=\""+zone.rowKey+"\" style=\"width: 200px; height: 200px; overflow-y: auto;\"><p style=\"width: 100%;\">&emsp;IMEI: " + zone.rowKey +"<br>&emsp;ID: "+ zone.partitionKey +"<br>&emsp;Phone name: "+ zone.name +"<br>&emsp;Latitude: "+ zone.xCoord +"<br>&emsp;Longitude: "+ zone.yCoord +"<br>&emsp;Added on: "+(new Date(Date.parse(zone.timestamp))).toString()+"<br>&emsp;Last accessed: "+(new Date(Date.parse(zone.last_accessed))).toString()+"</p><button onclick=\"Delete(this)\" style=\"width: 100%;\" class=\"btn btn-danger\">Șterge</button></div>")
+            )
+            .addTo(map));
+        }
+      }
+
+      function Delete(element)
+      {
+        /*var x = new Object();
+        x.name = element.parentElement.dataset.name;
+        x.PartitionKey = element.parentElement.dataset.id;
+        x.RowKey = element.parentElement.dataset.rowkey;
+        x.administrator = 1;*/
+        $.ajax({
+            url: "https://datcbuoys-webapi.azurewebsites.net/Ambrosia",
+            type: 'DELETE',
+            //data: JSON.stringify(x),
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            data: "{\"name\": \""+element.parentElement.dataset.name+"\",\"RowKey\": \""+element.parentElement.dataset.rowkey+"\",\"PartitionKey\": \""+element.parentElement.dataset.id+"\", \"administrator\":1}"
+        });
+      }
+
+      function ToggleRefresh()
+      {
+        refresh = !refresh;
+        if(refresh == true)
+          alert("Refresh is now on");
+        else
+          alert("Refresh is now off");
+      }
+
       function Refresh(map)
       {
-        $.ajax({
-          url: "https://datcbuoys-webapi.azurewebsites.net/Ambrosia",
-          type: "GET",
-          success: function(result){
-            for(var marker of markers)
-              item.remove();
-            for(var zone of result)
-            {
-              var el = document.createElement('div');
-              el.className = 'marker';
-              el.style.borderRadius = "50%";
-              el.style.width = "25px";
-              el.style.height = "25px";
-              el.style.backgroundColor = "rgba(255,0,0,0.5)";
+        if(refresh == true)
+        {
+          $.ajax({
+            url: "https://datcbuoys-webapi.azurewebsites.net/Ambrosia",
+            type: "GET",
+            success: function(result){
+              zones = result;
+              ResetZones(map);
 
-
-              // make a marker for each feature and add it to the map
-              var marker = new mapboxgl.Marker(el)
-                .setLngLat([zone.yCoord, zone.xCoord])
-                /*.setPopup(
-                  new mapboxgl.Popup({
-                    offset: 25
-                  }) // add popups
-                  .setHTML("<div style=\"background-color: red; width: 100%; height: 100%;\"></div>")
-                )*/
-                .addTo(map);
+            },
+            error: function(error){
+              console.log(error);
             }
+          });
+          $.ajax({
+            url: "https://datcbuoys-webapi.azurewebsites.net/Logs",
+            type: "GET",
+            success: function(result){
+              logs = result;
+              UpdateLogs();
 
-          },
-          error: function(error){
-            console.log(error);
-          }
-        });
+            },
+            error: function(error){
+              console.log(error);
+            }
+          });
+        }
         setTimeout(function(){Refresh(map)}, 10000);
+      }
+
+      function UpdateLogs()
+      {
+        document.getElementById('logs').innerHTML = "";
+        logs.sort(function(a, b){return Date.parse(a.timestamp) < Date.parse(b.timestamp)? 1: -1})
+        for(var log of logs)
+        {
+          var textarea = document.createElement('textarea');
+          textarea.style.width = "100%";
+          textarea.style.height = "10%";
+          textarea.style.marginTop = "5%";
+          textarea.style.marginBottom = "5%";
+          textarea.style.overflowX = "hidden";
+          textarea.style.overflowY = "hidden";
+          if(log.rowKey == "0")
+            textarea.innerHTML = "Type: Insert\nTimestamp: "+(new Date(Date.parse(log.timestamp))).toString()+"\n\n"+log.message;
+          else if(log.rowKey == "1")
+            textarea.innerHTML = "Type: Update\nTimestamp: "+(new Date(Date.parse(log.timestamp))).toString()+"\n\n"+log.message;
+          else if(log.rowKey == "2")
+            textarea.innerHTML = "Type: Delete\nTimestamp: "+(new Date(Date.parse(log.timestamp))).toString()+"\n\n"+log.message;
+          document.getElementById('logs').appendChild(textarea);
+        }
       }
 
   /*$.ajax({

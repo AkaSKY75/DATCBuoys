@@ -159,6 +159,13 @@ namespace Company.Function
                                     else
                                         log = new LogEntity(){ RowKey = "2", PartitionKey = (resultSegment_logger.Results.Max(x => Convert.ToInt32(x.PartitionKey))+1).ToString(), message = "Zone with id #" + command["PartitionKey"].ToObject<string>() + " added by user having phone name " + command["name"].ToObject<string>() + " and IMEI " + command["RowKey"].ToObject<string>() + " was automatically removed due to inactivity."};
                                 }
+                                else if(command["administrator"].ToObject<int>() == 1)
+                                {
+                                    if(resultSegment_logger.Results.Count == 0)
+                                        log = new LogEntity(){ RowKey = "2", PartitionKey = "0", message = "An administrator removed zone with id #" + command["PartitionKey"].ToObject<string>() + " added by user having phone name " + command["name"].ToObject<string>() + " and IMEI " + command["RowKey"].ToObject<string>()};
+                                    else
+                                        log = new LogEntity(){ RowKey = "2", PartitionKey = (resultSegment_logger.Results.Max(x => Convert.ToInt32(x.PartitionKey))+1).ToString(), message = "An administrator removed zone with id #" + command["PartitionKey"].ToObject<string>() + " added by user having phone name " + command["name"].ToObject<string>() + " and IMEI " + command["RowKey"].ToObject<string>()};
+                                }
                                 insertOperation_logger = TableOperation.Insert(log);
                                 Task.Run(async () =>{  await _logTable.ExecuteAsync(insertOperation_logger);}).GetAwaiter().GetResult();
                                 
